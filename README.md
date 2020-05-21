@@ -36,12 +36,87 @@ optional arguments:
 
 ### Example 1
 ```
-$ COMMAND
-TODO
+$ emlAnalyzer -i email_1.eml
+ =================
+ ||  Structure  ||
+ =================
+|- text/html
+
+ =========================
+ ||  URLs in HTML part  ||
+ =========================
+ - https://suspicious.site.com/Zajnad
+
+ ===============================================
+ ||  Reloaded Content (aka. Tracking Pixels)  ||
+ ===============================================
+[+] No content found which will be reloaded from external resources
+
+ ===================
+ ||  Attachments  ||
+ ===================
+[+] E-Mail contains no attachments
+
 ```
 
 ### Example 2
 ```
-$ COMMAND
-TODO
+$ emlAnalyzer -i email_2.eml
+ =================
+ ||  Structure  ||
+ =================
+|- multipart/mixed
+|  |- multipart/related
+|  |  |- text/html
+|  |  |- image/jpeg                        [image002.jpg]
+|  |  |- image/jpeg                        [image003.jpg]
+|  |  |- image/png                         [image004.png]
+|  |- message/rfc822
+|  |  |- multipart/alternative
+|  |  |  |- text/plain
+|  |  |  |- text/html
+
+ =========================
+ ||  URLs in HTML part  ||
+ =========================
+ - https://example.company.com/random/link
+ - mailto:john.doe@company.com
+
+ ===============================================
+ ||  Reloaded Content (aka. Tracking Pixels)  ||
+ ===============================================
+[+] No content found which will be reloaded from external resources
+
+ ===================
+ ||  Attachments  ||
+ ===================
+[1] image002.jpg        image/jpeg        inline
+[2] image003.jpg        image/jpeg        inline
+[3] image004.png        image/png         inline
+
+```
+
+### Example 3
+```
+$ emlAnalyzer -i email_1.eml --header
+
+ ==============
+ ||  Header  ||
+ ==============
+From..........................................John Doe <asjkasd@asdasd123.com>
+To............................................"bob@company.at" <bob@company.at>
+Subject.......................................RANDOM SUBJECT
+Thread-Topic..................................RANDOM SUBJECT
+X-MS-Exchange-MessageSentRepresentingType.....1
+Date..........................................Tue, 19 May 2020 07:02:37 +0000
+Accept-Language...............................de-DE, en-US
+Content-Language..............................de-DE
+X-MS-Exchange-Organization-AuthAs.............Anonymous
+X-MS-Has-Attach...............................
+X-MS-TNEF-Correlator..........................
+x-fireeye.....................................Clean
+x-rmx-source..................................123.123.123.123
+Content-Type..................................text/html; charset="iso-8859-1"
+Content-Transfer-Encoding.....................quoted-printable
+MIME-Version..................................1.0
 ```
