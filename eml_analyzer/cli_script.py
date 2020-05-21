@@ -131,7 +131,7 @@ def extract_attachment(parsed_eml: Message, attachment_number: int, output_path:
 
 
 def main():
-    argument_parser = argparse.ArgumentParser(usage='emlAnalyzer [OPTION]... [FILE]', description='Lists information about the FILEs (the current directory by default) including Alternate Data Streams.')
+    argument_parser = argparse.ArgumentParser(usage='emlAnalyzer [OPTION]... [FILE]', description='A cli script to analyze an E-Mail in the eml format for viewing the header, extracting attachments etc.')
     argument_parser.add_argument('-i', '--input', help="path to the eml-file (is required)", type=str)
     argument_parser.add_argument('--header', action='store_true', default=False, help="Shows the headers")
     argument_parser.add_argument('-x', '--tracking', action='store_true', default=False, help="Shows content which is reloaded from external ressources in the HTML part")

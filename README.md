@@ -13,7 +13,7 @@ Type ```emlAnalyzer --help``` to view the help.
 ```
 usage: emlAnalyzer [OPTION]... [FILE]
 
-Lists information about the FILEs (the current directory by default) including Alternate Data Streams.
+A cli script to analyze an E-Mail in the eml format for viewing the header, extracting attachments etc.
 
 optional arguments:
   -h, --help            show this help message and exit
