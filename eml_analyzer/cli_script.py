@@ -112,7 +112,7 @@ def __try_to_decode(content: bytes, parsed_eml: Message) -> str or None:
     return None
 
 
-def __create_list_of_possible_encodings(parsed_eml: Message) -> list:
+def __create_list_of_possible_encodings(parsed_eml: Message) -> set:
     """ creates a list of the most possible encodings of the payload """
     list_of_possible_encodings = set()
 
