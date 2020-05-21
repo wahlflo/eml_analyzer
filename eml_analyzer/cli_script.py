@@ -38,13 +38,13 @@ def __show_structure(parsed_eml: Message, level=0):
 def check_tracking(parsed_eml: Message):
     print_headline_banner(headline='Reloaded Content (aka. Tracking Pixels)')
     sources = set()
-    for child in parsed_eml.walk():
-        if child.get_content_type() == 'text/html':
-            html_str = child.get_payload(decode=True).decode()
-            for pattern in [r'src="(.+?)"', r"src='(.+?)'", r'background="(.+?)"', r"background='(.+?)'"]:
-                for match in re.finditer(pattern, html_str):
-                    if not match.group(1).startswith('cid:'):
-                        sources.add(match.group(1))
+    html_str = __get_decoded_payload(parsed_eml=parsed_eml, content_type='text/html')
+    if html_str is None:
+        warning('Email contains no HTML')
+    for pattern in [r'src="(.+?)"', r"src='(.+?)'", r'background="(.+?)"', r"background='(.+?)'"]:
+        for match in re.finditer(pattern, html_str):
+            if not match.group(1).startswith('cid:'):
+                sources.add(match.group(1))
     if len(sources) == 0:
         info(message='No content found which will be reloaded from external resources')
     for x in sources:
@@ -55,12 +55,12 @@ def check_tracking(parsed_eml: Message):
 def show_urls(parsed_eml: Message):
     print_headline_banner(headline='URLs in HTML part')
     all_links = set()
-    for child in parsed_eml.walk():
-        if child.get_content_type() == 'text/html':
-            html_str = child.get_payload(decode=True).decode()
-            for pattern in [r'href="(.+?)"', r"href='(.+?)'"]:
-                for match in re.finditer(pattern, html_str):
-                    all_links.add(match.group(1))
+    html_str = __get_decoded_payload(parsed_eml=parsed_eml, content_type='text/html')
+    if html_str is None:
+        warning('Email contains no HTML')
+    for pattern in [r'href="(.+?)"', r"href='(.+?)'"]:
+        for match in re.finditer(pattern, html_str):
+            all_links.add(match.group(1))
     if len(all_links) == 0:
         info(message='No URLs found in the html')
     for x in all_links:
