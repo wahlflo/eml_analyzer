@@ -8,9 +8,14 @@ from cli_formatter.output_formatting import colorize_string, Color, warning, err
 
 def show_header(parsed_eml: Message):
     print_headline_banner(headline='Header')
-    max_key_width = max([len(x) for x in parsed_eml.keys()])
+    max_key_width = max([len(x) for x, _ in parsed_eml.items()])
     for key, value in parsed_eml.items():
-        print(colorize_string(text=key, color=Color.CYAN).ljust(max_key_width + 5, '.'), value)
+        values_in_lines = value.split('\n')
+        first_value = values_in_lines.pop(0)
+        print(colorize_string(text=key, color=Color.CYAN) + (max_key_width - len(key) + 5) * '.' + first_value)
+        for x in values_in_lines:
+            x = x.replace('\t', '').strip().replace('\r', '').strip(' ')
+            print((max_key_width + 5) * ' ' + x)
     print()
 
 
@@ -65,23 +70,69 @@ def show_urls(parsed_eml: Message):
 
 def show_text(parsed_eml: Message):
     print_headline_banner(headline='Plaintext')
-    for child in parsed_eml.walk():
-        if child.get_content_type() == 'text/plain':
-            print(child.get_payload(decode=True).decode())
-            print()
-            print(100*'#')
+    text = __get_decoded_payload(parsed_eml=parsed_eml, content_type='text/plain')
+    if text is None:
+        info('Email contains no plaintext')
+    else:
+        print(text)
     print()
 
 
 def show_html(parsed_eml: Message):
     print_headline_banner(headline='HTML')
-    for child in parsed_eml.walk():
-        if child.get_content_type() == 'text/html':
-            html_str = child.get_payload(decode=True).decode()
-            print(html_str)
-            print()
-            print(100 * '#')
+    html = __get_decoded_payload(parsed_eml=parsed_eml, content_type='text/html')
+    if html is None:
+        info('Email contains no HTML')
+    else:
+        print(html)
     print()
+
+
+def __get_decoded_payload(parsed_eml: Message, content_type: str) -> str or None:
+    if parsed_eml.get_content_type() == content_type:
+        html_in_bytes = parsed_eml.get_payload(decode=True)
+        return __try_to_decode(content=html_in_bytes, parsed_eml=parsed_eml)
+    if type(parsed_eml.get_payload()) is not list:
+        return
+    for sub_element in parsed_eml.get_payload():
+        result = __get_decoded_payload(parsed_eml=sub_element, content_type=content_type)
+        if result is not None:
+            return result
+
+
+def __try_to_decode(content: bytes, parsed_eml: Message) -> str or None:
+    list_of_possible_encodings = __create_list_of_possible_encodings(parsed_eml=parsed_eml)
+
+    for encoding_format in list_of_possible_encodings:
+        try:
+            return content.decode(encoding_format)
+        except ValueError:
+            continue
+    error('Payload could not be decoded')
+    return None
+
+
+def __create_list_of_possible_encodings(parsed_eml: Message) -> list:
+    """ creates a list of the most possible encodings of the payload """
+    list_of_possible_encodings = set()
+
+    # at first add the encodings mentioned in the object header
+    for k, v in parsed_eml.items():
+        k = str(k).lower()
+        v = str(v).lower()
+        if k == 'content-type':
+            entries = v.split(';')
+            for entry in entries:
+                entry = entry.strip()
+                if entry.startswith('charset='):
+                    encoding = entry.replace('charset=', '').replace('"', '')
+                    list_of_possible_encodings.add(encoding)
+
+    for x in ['utf-8', 'windows-1251', 'iso-8859-1', 'us-ascii', 'iso-8859-15']:
+        if x not in list_of_possible_encodings:
+            list_of_possible_encodings.add(x)
+
+    return list_of_possible_encodings
 
 
 def show_attachments(parsed_eml: Message):
@@ -197,6 +248,10 @@ def main():
         check_tracking(parsed_eml=parsed_eml)
     if arguments.attachments:
         show_attachments(parsed_eml=parsed_eml)
+    if arguments.text:
+        show_text(parsed_eml=parsed_eml)
+    if arguments.html:
+        show_html(parsed_eml=parsed_eml)
 
     if arguments.extract is not None:
         extract_attachment(parsed_eml=parsed_eml, attachment_number=arguments.extract, output_path=arguments.output)
