@@ -41,14 +41,15 @@ def check_tracking(parsed_eml: Message):
     html_str = __get_decoded_payload(parsed_eml=parsed_eml, content_type='text/html')
     if html_str is None:
         warning('Email contains no HTML')
-    for pattern in [r'src="(.+?)"', r"src='(.+?)'", r'background="(.+?)"', r"background='(.+?)'"]:
-        for match in re.finditer(pattern, html_str):
-            if not match.group(1).startswith('cid:'):
-                sources.add(match.group(1))
-    if len(sources) == 0:
-        info(message='No content found which will be reloaded from external resources')
-    for x in sources:
-        print(' - ' + colorize_string(text=x, color=Color.MAGENTA))
+    else:
+        for pattern in [r'src="(.+?)"', r"src='(.+?)'", r'background="(.+?)"', r"background='(.+?)'"]:
+            for match in re.finditer(pattern, html_str):
+                if not match.group(1).startswith('cid:'):
+                    sources.add(match.group(1))
+        if len(sources) == 0:
+            info(message='No content found which will be reloaded from external resources')
+        for x in sources:
+            print(' - ' + colorize_string(text=x, color=Color.MAGENTA))
     print()
 
 
@@ -58,13 +59,14 @@ def show_urls(parsed_eml: Message):
     html_str = __get_decoded_payload(parsed_eml=parsed_eml, content_type='text/html')
     if html_str is None:
         warning('Email contains no HTML')
-    for pattern in [r'href="(.+?)"', r"href='(.+?)'"]:
-        for match in re.finditer(pattern, html_str):
-            all_links.add(match.group(1))
-    if len(all_links) == 0:
-        info(message='No URLs found in the html')
-    for x in all_links:
-        print(' - ' + colorize_string(text=x, color=Color.MAGENTA))
+    else:
+        for pattern in [r'href="(.+?)"', r"href='(.+?)'"]:
+            for match in re.finditer(pattern, html_str):
+                all_links.add(match.group(1))
+        if len(all_links) == 0:
+            info(message='No URLs found in the html')
+        for x in all_links:
+            print(' - ' + colorize_string(text=x, color=Color.MAGENTA))
     print()
 
 
