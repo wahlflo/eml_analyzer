@@ -5,7 +5,6 @@ from email.message import Message
 import re
 from cli_formatter.output_formatting import colorize_string, Color, warning, error, info, print_headline_banner
 
-
 def show_header(parsed_eml: Message):
     print_headline_banner(headline='Header')
     max_key_width = max([len(x) for x, _ in parsed_eml.items()])
@@ -183,7 +182,7 @@ def main():
     argument_parser.add_argument('--html', action='store_true', default=False, help="Shows HTML")
     argument_parser.add_argument('-s', '--structure', action='store_true', default=False, help="Shows structure of the E-Mail")
     argument_parser.add_argument('-u', '--url', action='store_true', default=False, help="Shows embedded links and urls in the html part")
-    argument_parser.add_argument('-ea', '--extract', type=int, default=None, help="Extracts the x-th attachment")
+    argument_parser.add_argument('-ea', '--extract', action='store_true', default=None, help="Extracts all  attachments")
     argument_parser.add_argument('-o', '--output', type=str, default=None, help="Path for the extracted attachment (default is filename in working directory)")
     arguments = argument_parser.parse_args()
 
@@ -246,7 +245,7 @@ def main():
         show_html(parsed_eml=parsed_eml)
 
     if arguments.extract is not None:
-        extract_attachment(parsed_eml=parsed_eml, attachment_number=arguments.extract, output_path=arguments.output)
+        extract_attachment(parsed_eml=parsed_eml, output_path=arguments.output)
 
 
 if __name__ == '__main__':

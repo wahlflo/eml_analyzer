@@ -6,13 +6,13 @@ with open('README.md', mode='r', encoding='utf-8') as readme_file:
 
 setuptools.setup(
     name="eml-analyzer",
-    version="1.0.1",
-    author="Florian Wahl",
-    author_email="florian.wahl.developer@gmail.com",
+    version="1.1.0",
+    author="Debra White",
+    author_email="git@27c1ub.com",
     description="A cli script to analyze an E-Mail in the eml format for viewing the header, extracting attachments etc.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/wahlflo/eml_analyzer",
+    url="https://github.com/debragail/eml_analyzer",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
