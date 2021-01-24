@@ -152,26 +152,24 @@ def show_attachments(parsed_eml: Message):
             print(index_str, filename.ljust(max_width_filename), content_type.ljust(max_width_content_type), disposition)
     print()
 
-
 def extract_attachment(parsed_eml: Message, output_path: str or None):
     print_headline_banner('Attachment Extracting')
-    attachments = list()
+    attachment = None
     for child in parsed_eml.walk():
-        if child.get_filename() is not None:
-            attachments.append((child.get_filename(), str(child.get_content_type()), str(child.get_content_disposition())))
-    if len(attachments) == 0:
-        info('E-Mail contains no attachments')
-    else:
-        for index, (filename) in enumerate(attachments):
-            if output_path is None:
-                output_path = attachment.get_filename()
-            elif os.path.isdir(output_path):
-                output_path = os.path.join(output_path, attachments.get_filename())
-                payload = attachments.get_payload(decode=True)
-                output_file = open(output_path, mode='wb')
-                output_file.write(payload)
-                info('Attachment extracted to {}'.format(output_path))
-
+      if child.get_filename() is None:
+        continue
+      print(child.get_filename())
+      path = output_path
+      attachment = child      
+      if path is None:
+          path = attachment.get_filename()
+      elif os.path.isdir(path):
+          path = os.path.join(path, attachment.get_filename())
+      payload = attachment.get_payload(decode=True)
+      output_file = open(path, mode='wb')
+      output_file.write(payload)
+      info('Attachment extracted to {}'.format(path))
+    
 def main():
     argument_parser = argparse.ArgumentParser(usage='emlAnalyzer [OPTION]... [FILE]', description='A cli script to analyze an E-Mail in the eml format for viewing the header, extracting attachments etc.')
     argument_parser.add_argument('-i', '--input', help="path to the eml-file (is required)", type=str)
