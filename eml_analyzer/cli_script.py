@@ -166,8 +166,8 @@ def extract_attachment(parsed_eml: Message, output_path: str or None):
             if output_path is None:
                 output_path = attachment.get_filename()
             elif os.path.isdir(output_path):
-                output_path = os.path.join(output_path, attachment.get_filename())
-                payload = attachment.get_payload(decode=True)
+                output_path = os.path.join(output_path, attachments.get_filename())
+                payload = attachments.get_payload(decode=True)
                 output_file = open(output_path, mode='wb')
                 output_file.write(payload)
                 info('Attachment extracted to {}'.format(output_path))
