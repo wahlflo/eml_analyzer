@@ -154,34 +154,24 @@ def show_attachments(parsed_eml: Message):
     print()
 
 
-def extract_attachment(parsed_eml: Message, attachment_number: int, output_path: str or None):
+def extract_attachment(parsed_eml: Message, output_path: str or None):
     print_headline_banner('Attachment Extracting')
-    attachment = None
-    counter = 1
+    attachments = list()
     for child in parsed_eml.walk():
         if child.get_filename() is not None:
-            if counter == attachment_number:
-                attachment = child
-                break
-            counter += 1
-
-    # Check if attachment was found
-    if attachment is None:
-        error('Attachment {} could not be found'.format(attachment_number))
-        return
-
-    info('Found attachment [{}] "{}"'.format(attachment_number, attachment.get_filename()))
-
-    if output_path is None:
-        output_path = attachment.get_filename()
-    elif os.path.isdir(output_path):
-        output_path = os.path.join(output_path, attachment.get_filename())
-
-    payload = attachment.get_payload(decode=True)
-    output_file = open(output_path, mode='wb')
-    output_file.write(payload)
-    info('Attachment extracted to {}'.format(output_path))
-
+            attachments.append((child.get_filename(), str(child.get_content_type()), str(child.get_content_disposition())))
+    if len(attachments) == 0:
+        info('E-Mail contains no attachments')
+    else:
+        for index, (filename) in enumerate(attachments):
+            if output_path is None:
+                output_path = attachment.get_filename()
+            elif os.path.isdir(output_path):
+                output_path = os.path.join(output_path, attachment.get_filename())
+                payload = attachment.get_payload(decode=True)
+                output_file = open(output_path, mode='wb')
+                output_file.write(payload)
+                info('Attachment extracted to {}'.format(output_path))
 
 def main():
     argument_parser = argparse.ArgumentParser(usage='emlAnalyzer [OPTION]... [FILE]', description='A cli script to analyze an E-Mail in the eml format for viewing the header, extracting attachments etc.')
