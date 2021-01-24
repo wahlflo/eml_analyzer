@@ -151,8 +151,35 @@ def show_attachments(parsed_eml: Message):
             index_str = '[' + colorize_string(text=str(index+1), color=Color.CYAN) + ']'
             print(index_str, filename.ljust(max_width_filename), content_type.ljust(max_width_content_type), disposition)
     print()
+def extract_attachment(parsed_eml: Message, attachment_number: int, output_path: str or None):
+    print_headline_banner('Attachment Extracting')
+    attachment = None
+    counter = 1
+    for child in parsed_eml.walk():
+        if child.get_filename() is not None:
+            if counter == attachment_number:
+                attachment = child
+                break
+            counter += 1
 
-def extract_attachment(parsed_eml: Message, output_path: str or None):
+    # Check if attachment was found
+    if attachment is None:
+        error('Attachment {} could not be found'.format(attachment_number))
+        return
+
+    info('Found attachment [{}] "{}"'.format(attachment_number, attachment.get_filename()))
+
+    if output_path is None:
+        output_path = attachment.get_filename()
+    elif os.path.isdir(output_path):
+        output_path = os.path.join(output_path, attachment.get_filename())
+
+    payload = attachment.get_payload(decode=True)
+    output_file = open(output_path, mode='wb')
+    output_file.write(payload)
+    info('Attachment extracted to {}'.format(output_path))
+    
+def extract_all_attachments(parsed_eml: Message, output_path: str or None):
     print_headline_banner('Attachment Extracting')
     attachment = None
     for child in parsed_eml.walk():
@@ -180,7 +207,8 @@ def main():
     argument_parser.add_argument('--html', action='store_true', default=False, help="Shows HTML")
     argument_parser.add_argument('-s', '--structure', action='store_true', default=False, help="Shows structure of the E-Mail")
     argument_parser.add_argument('-u', '--url', action='store_true', default=False, help="Shows embedded links and urls in the html part")
-    argument_parser.add_argument('-ea', '--extract', action='store_true', default=None, help="Extracts all  attachments")
+    argument_parser.add_argument('-ea', '--extract', type=int, default=None, help="Extracts the x-th attachment")
+    argument_parser.add_argument('--extract-all', action='store_true', default=None, help="Extracts all attachments")
     argument_parser.add_argument('-o', '--output', type=str, default=None, help="Path for the extracted attachment (default is filename in working directory)")
     arguments = argument_parser.parse_args()
 
@@ -219,7 +247,8 @@ def main():
                                     arguments.html or
                                     arguments.structure or
                                     arguments.url or
-                                    arguments.extract is not None)
+                                    arguments.extract or
+                                    arguments.extract_all is not None)
 
     if is_default_functionality:
         arguments.structure = True
@@ -241,9 +270,10 @@ def main():
         show_text(parsed_eml=parsed_eml)
     if arguments.html:
         show_html(parsed_eml=parsed_eml)
-
     if arguments.extract is not None:
-        extract_attachment(parsed_eml=parsed_eml, output_path=arguments.output)
+        extract_attachment(parsed_eml=parsed_eml, attachment_number=arguments.extract, output_path=arguments.output)
+    if arguments.extract_all is not None:
+        extract_all_attachments(parsed_eml=parsed_eml, output_path=arguments.output)
 
 
 if __name__ == '__main__':
