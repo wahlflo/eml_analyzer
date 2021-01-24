@@ -6,7 +6,7 @@ with open('README.md', mode='r', encoding='utf-8') as readme_file:
 
 setuptools.setup(
     name="eml-analyzer",
-    version="1.1.0",
+    version="2.0.0",
     author="Debra White",
     author_email="git@27c1ub.com",
     description="A cli script to analyze an E-Mail in the eml format for viewing the header, extracting attachments etc.",
