@@ -151,6 +151,8 @@ def show_attachments(parsed_eml: Message):
             index_str = '[' + colorize_string(text=str(index+1), color=Color.CYAN) + ']'
             print(index_str, filename.ljust(max_width_filename), content_type.ljust(max_width_content_type), disposition)
     print()
+    
+    
 def extract_attachment(parsed_eml: Message, attachment_number: int, output_path: str or None):
     print_headline_banner('Attachment Extracting')
     attachment = None
@@ -179,6 +181,7 @@ def extract_attachment(parsed_eml: Message, attachment_number: int, output_path:
     output_file.write(payload)
     info('Attachment extracted to {}'.format(output_path))
     
+    
 def extract_all_attachments(parsed_eml: Message, output_path: str or None):
     print_headline_banner('Attachment Extracting')
     attachment = None
@@ -196,6 +199,7 @@ def extract_all_attachments(parsed_eml: Message, output_path: str or None):
       output_file = open(path, mode='wb')
       output_file.write(payload)
       info('Attachment extracted to {}'.format(path))
+    
     
 def main():
     argument_parser = argparse.ArgumentParser(usage='emlAnalyzer [OPTION]... [FILE]', description='A cli script to analyze an E-Mail in the eml format for viewing the header, extracting attachments etc.')
