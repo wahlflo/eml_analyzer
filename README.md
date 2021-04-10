@@ -28,6 +28,7 @@ optional arguments:
   -u, --url             Shows embedded links and urls in the html part
   -ea EXTRACT, --extract EXTRACT
                         Extracts the x-th attachment
+  --extract-all         Extracts all attachments
   -o OUTPUT, --output OUTPUT
                         Path for the extracted attachment (default is filename in working directory)
 ```

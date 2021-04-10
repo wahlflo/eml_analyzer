@@ -142,7 +142,8 @@ def show_attachments(parsed_eml: Message):
     attachments = list()
     for child in parsed_eml.walk():
         if child.get_filename() is not None:
-            attachments.append((child.get_filename(), str(child.get_content_type()), str(child.get_content_disposition())))
+            attachment_filename = _get_save_filename_from_attachment(attachment=child)
+            attachments.append((attachment_filename, str(child.get_content_type()), str(child.get_content_disposition())))
     if len(attachments) == 0:
         info('E-Mail contains no attachments')
     else:
@@ -170,12 +171,14 @@ def extract_attachment(parsed_eml: Message, attachment_number: int, output_path:
         error('Attachment {} could not be found'.format(attachment_number))
         return
 
-    info('Found attachment [{}] "{}"'.format(attachment_number, attachment.get_filename()))
+    attachment_filename = _get_save_filename_from_attachment(attachment=attachment)
+
+    info('Found attachment [{}] "{}"'.format(attachment_number,  attachment_filename))
 
     if output_path is None:
         output_path = attachment.get_filename()
     elif os.path.isdir(output_path):
-        output_path = os.path.join(output_path, attachment.get_filename())
+        output_path = os.path.join(output_path, attachment_filename)
 
     payload = attachment.get_payload(decode=True)
     output_file = open(output_path, mode='wb')
@@ -183,17 +186,59 @@ def extract_attachment(parsed_eml: Message, attachment_number: int, output_path:
     info('Attachment extracted to {}'.format(output_path))
 
 
+def extract_all_attachments(parsed_eml: Message, path: str or None):
+    print_headline_banner('Attachment Extracting')
+
+    # if no output directory is given then a default directory with the name 'eml_attachments' is used
+    if path is None:
+        path = 'eml_attachments'
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    counter = 0
+    for child in parsed_eml.walk():
+        if child.get_filename() is None:
+            continue
+        counter += 1
+
+        attachment_filename = _get_save_filename_from_attachment(attachment=child)
+
+        output_path = os.path.join(path, attachment_filename)
+
+        # write attachment to disk
+        payload = child.get_payload(decode=True)
+        output_file = open(output_path, mode='wb')
+        output_file.write(payload)
+
+        info('Attachment [{}] "{}" extracted to {}'.format(counter, attachment_filename, output_path))
+
+
+def _get_save_filename_from_attachment(attachment: Message) -> str:
+    """ returns a valid filename for a given attachment name """
+    attachment_name = attachment.get_filename()
+    additional_allowed_chars = {'_', '.', '(', ')', '-', ' '}
+    clean_name = ''
+    for x in attachment_name:
+        if x.isalpha() or x.isalnum() or x in additional_allowed_chars:
+            clean_name += x
+        elif x.isprintable():
+            clean_name += '_'
+    return clean_name
+
+
 def main():
     argument_parser = argparse.ArgumentParser(usage='emlAnalyzer [OPTION]... [FILE]', description='A cli script to analyze an E-Mail in the eml format for viewing the header, extracting attachments etc.')
     argument_parser.add_argument('-i', '--input', help="path to the eml-file (is required)", type=str)
     argument_parser.add_argument('--header', action='store_true', default=False, help="Shows the headers")
-    argument_parser.add_argument('-x', '--tracking', action='store_true', default=False, help="Shows content which is reloaded from external ressources in the HTML part")
+    argument_parser.add_argument('-x', '--tracking', action='store_true', default=False, help="Shows content which is reloaded from external resources in the HTML part")
     argument_parser.add_argument('-a', '--attachments', action='store_true', default=False, help="Lists attachments")
     argument_parser.add_argument('--text', action='store_true', default=False, help="Shows plaintext")
     argument_parser.add_argument('--html', action='store_true', default=False, help="Shows HTML")
     argument_parser.add_argument('-s', '--structure', action='store_true', default=False, help="Shows structure of the E-Mail")
     argument_parser.add_argument('-u', '--url', action='store_true', default=False, help="Shows embedded links and urls in the html part")
     argument_parser.add_argument('-ea', '--extract', type=int, default=None, help="Extracts the x-th attachment")
+    argument_parser.add_argument('--extract-all', action='store_true', default=None, help="Extracts all attachments")
     argument_parser.add_argument('-o', '--output', type=str, default=None, help="Path for the extracted attachment (default is filename in working directory)")
     arguments = argument_parser.parse_args()
 
@@ -257,6 +302,8 @@ def main():
 
     if arguments.extract is not None:
         extract_attachment(parsed_eml=parsed_eml, attachment_number=arguments.extract, output_path=arguments.output)
+    if arguments.extract_all is not None:
+        extract_all_attachments(parsed_eml=parsed_eml, path=arguments.output)
 
 
 if __name__ == '__main__':
