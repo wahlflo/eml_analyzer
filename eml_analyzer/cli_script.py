@@ -4,6 +4,8 @@ from email import message_from_string
 from email.message import Message
 import re
 from cli_formatter.output_formatting import colorize_string, Color, warning, error, info, print_headline_banner
+import base64
+import binascii
 
 
 def show_header(parsed_eml: Message):
@@ -142,7 +144,7 @@ def show_attachments(parsed_eml: Message):
     attachments = list()
     for child in parsed_eml.walk():
         if child.get_filename() is not None:
-            attachment_filename = _get_save_filename_from_attachment(attachment=child)
+            attachment_filename = _get_printable_attachment_filename(attachment=child)
             attachments.append((attachment_filename, str(child.get_content_type()), str(child.get_content_disposition())))
     if len(attachments) == 0:
         info('E-Mail contains no attachments')
@@ -171,7 +173,7 @@ def extract_attachment(parsed_eml: Message, attachment_number: int, output_path:
         error('Attachment {} could not be found'.format(attachment_number))
         return
 
-    attachment_filename = _get_save_filename_from_attachment(attachment=attachment)
+    attachment_filename = _get_printable_attachment_filename(attachment=attachment)
 
     info('Found attachment [{}] "{}"'.format(attachment_number,  attachment_filename))
 
@@ -202,7 +204,7 @@ def extract_all_attachments(parsed_eml: Message, path: str or None):
             continue
         counter += 1
 
-        attachment_filename = _get_save_filename_from_attachment(attachment=child)
+        attachment_filename = _get_printable_attachment_filename(attachment=child)
 
         output_path = os.path.join(path, attachment_filename)
 
@@ -214,9 +216,12 @@ def extract_all_attachments(parsed_eml: Message, path: str or None):
         info('Attachment [{}] "{}" extracted to {}'.format(counter, attachment_filename, output_path))
 
 
-def _get_save_filename_from_attachment(attachment: Message) -> str:
+def _get_printable_attachment_filename(attachment: Message) -> str:
     """ returns a valid filename for a given attachment name """
     attachment_name = attachment.get_filename()
+
+    attachment_name = _decode_acii_encoded_utf8_string(string=attachment_name)
+
     additional_allowed_chars = {'_', '.', '(', ')', '-', ' '}
     clean_name = ''
     for x in attachment_name:
@@ -225,6 +230,16 @@ def _get_save_filename_from_attachment(attachment: Message) -> str:
         elif x.isprintable():
             clean_name += '_'
     return clean_name
+
+
+def _decode_acii_encoded_utf8_string(string: str) -> str:
+    """ decodes ASCII strings which are encoded like: name := "?UTF-8?B?" + base64_encode(filename) + "?=" """
+    for match in list(re.finditer(pattern=r'=\?utf-8\?B\?(.+?)\?=', string=string)):
+        try:
+            string = string.replace(match.group(0), base64.b64decode(match.group(1)).decode('utf-8'))
+        except binascii.Error:
+            pass
+    return string
 
 
 def main():
