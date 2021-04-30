@@ -228,7 +228,7 @@ def _get_save_filename_from_attachment(attachment: Message) -> str:
 
 
 def main():
-    argument_parser = argparse.ArgumentParser(usage='emlAnalyzer [OPTION]... [FILE]', description='A cli script to analyze an E-Mail in the eml format for viewing the header, extracting attachments etc.')
+    argument_parser = argparse.ArgumentParser(usage='emlAnalyzer [OPTION]... -i FILE', description='A cli script to analyze an E-Mail in the eml format for viewing the header, extracting attachments etc.')
     argument_parser.add_argument('-i', '--input', help="path to the eml-file (is required)", type=str)
     argument_parser.add_argument('--header', action='store_true', default=False, help="Shows the headers")
     argument_parser.add_argument('-x', '--tracking', action='store_true', default=False, help="Shows content which is reloaded from external resources in the HTML part")
