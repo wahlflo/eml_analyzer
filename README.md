@@ -11,7 +11,7 @@ Install the package with pip
 Type ```emlAnalyzer --help``` to view the help.
 
 ```
-usage: emlAnalyzer [OPTION]... [FILE]
+usage: emlAnalyzer [OPTION]... -i FILE
 
 A cli script to analyze an E-Mail in the eml format for viewing the header, extracting attachments etc.
 
