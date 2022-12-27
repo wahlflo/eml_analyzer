@@ -1,5 +1,5 @@
 # emlAnalyzer
-A cli script to analyze an E-Mail in the eml format for viewing the header, extracting attachments etc.
+A CLI script to analyze an email in the EML format for viewing headers, extracting attachments, etc.
 
 ## Installation
 
@@ -11,16 +11,16 @@ Install the package with pip
 Type ```emlAnalyzer --help``` to view the help.
 
 ```
-usage: emlAnalyzer [OPTION]... -i FILE
+usage: emlAnalyzer [-h] [-i [INPUT]] [--header] [-x] [-a] [--text] [--html] [-s] [-u] [-ea EXTRACT] [--extract-all] [-o OUTPUT]
 
-A cli script to analyze an E-Mail in the eml format for viewing the header, extracting attachments etc.
+A CLI script to analyze an email in the EML format for viewing headers, extracting attachments, etc.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -i INPUT, --input INPUT
-                        path to the eml-file (is required)
+  -i [INPUT], --input [INPUT]
+                        Path to the EML file. Accepts standard input if omitted
   --header              Shows the headers
-  -x, --tracking        Shows content which is reloaded from external ressources in the HTML part
+  -x, --tracking        Shows content which is reloaded from external resources in the HTML part
   -a, --attachments     Lists attachments
   --text                Shows plaintext
   --html                Shows HTML
