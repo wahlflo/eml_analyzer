@@ -1,5 +1,6 @@
 import argparse
 import os
+import sys
 from email import message_from_string
 from email.message import Message
 import re
@@ -243,8 +244,8 @@ def _decode_acii_encoded_utf8_string(string: str) -> str:
 
 
 def main():
-    argument_parser = argparse.ArgumentParser(usage='emlAnalyzer [OPTION]... -i FILE', description='A cli script to analyze an E-Mail in the eml format for viewing the header, extracting attachments etc.')
-    argument_parser.add_argument('-i', '--input', help="path to the eml-file (is required)", type=str)
+    argument_parser = argparse.ArgumentParser(prog='emlAnalyzer', description='A CLI script to analyze an email in the EML format for viewing headers, extracting attachments, etc.')
+    argument_parser.add_argument('--input', '-i', help="Path to the EML file. Accepts standard input if omitted", type=argparse.FileType('r'), nargs='?', default=sys.stdin)
     argument_parser.add_argument('--header', action='store_true', default=False, help="Shows the headers")
     argument_parser.add_argument('-x', '--tracking', action='store_true', default=False, help="Shows content which is reloaded from external resources in the HTML part")
     argument_parser.add_argument('-a', '--attachments', action='store_true', default=False, help="Lists attachments")
@@ -257,17 +258,14 @@ def main():
     argument_parser.add_argument('-o', '--output', type=str, default=None, help="Path for the extracted attachment (default is filename in working directory)")
     arguments = argument_parser.parse_args()
 
-    if arguments.input is None or len(arguments.input) == 0:
-        warning('No Input specified')
+    if not arguments.input:
+        warning('No input specified')
         argument_parser.print_help()
         exit()
 
-    # get the absolute path to the input file
-    path_to_input = os.path.abspath(arguments.input)
-
     # read the eml file
     try:
-        with open(path_to_input, mode='r') as input_file:
+        with arguments.input as input_file:
             eml_content = input_file.read()
     except Exception as e:
         error('Error: {}'.format(e))
