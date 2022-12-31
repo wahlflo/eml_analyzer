@@ -27,8 +27,8 @@ optional arguments:
   -s, --structure       Shows structure of the E-Mail
   -u, --url             Shows embedded links and urls in the HTML and text part
   -ea EXTRACT, --extract EXTRACT
-                        Extracts the x-th attachment
-  --extract-all         Extracts all attachments
+                        Extracts the x-th attachment. Can not be used together with the '--format' parameter.
+  --extract-all         Extracts all attachments. If a output format is specified the content of the attachments will be included in the structural output as a base64 encoded blob
   -o OUTPUT, --output OUTPUT
                         Path for the extracted attachment (default is filename in working directory)
   --format [{json}]     Specifies a structured output format, the default format is not machine-readable
