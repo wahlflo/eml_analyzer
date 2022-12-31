@@ -25,7 +25,7 @@ optional arguments:
   --text                Shows plaintext
   --html                Shows HTML
   -s, --structure       Shows structure of the E-Mail
-  -u, --url             Shows embedded links and urls in the html part
+  -u, --url             Shows embedded links and urls in the HTML and text part
   -ea EXTRACT, --extract EXTRACT
                         Extracts the x-th attachment
   --extract-all         Extracts all attachments
