@@ -1,0 +1,93 @@
+To: Alf <alf@melmac.local>
+Subject: UnitTest Subject =?UTF-8?B?TcO8bmNoZW4s?=
+From: mlemos <alf@test.org>
+Reply-To: McTest <test@unit.org>
+Sender: test@sender.org
+X-Mailer: UnitTest
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="652b8c4dcb00cdcdda1e16af36781caf"
+Message-ID: <20050430192829.0489.mlemos@acm.org>
+Date: Sat, 30 Apr 2005 19:28:29 -0300
+
+
+--652b8c4dcb00cdcdda1e16af36781caf
+Content-Type: multipart/related; boundary="6a82fb459dcaacd40ab3404529e808dc"
+
+
+--6a82fb459dcaacd40ab3404529e808dc
+Content-Type: multipart/alternative; boundary="69c1683a3ee16ef7cf16edd700694a2f"
+
+
+--69c1683a3ee16ef7cf16edd700694a2f
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+This is an HTML message. Please use an HTML capable mail program to read
+this message.
+
+--69c1683a3ee16ef7cf16edd700694a2f
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<title>Testing Email</title>
+<style type=3D"text/css">
+<!--
+body { color: black ; font-family: arial, helvetica, sans-serif ; backgroun=
+d-color: #A3C5CC }
+A:link, A:visited, A:active { text-decoration: underline }
+-->
+</style>
+</head>
+<body>
+<table background=3D"cid:4c837ed463ad29c820668e835a270e8a.gif" width=3D"100=
+%">
+<tr>
+<td>
+<center><h1>Testing eml file</h1></center>
+<hr>
+<P>Hello Alf,<br>
+https://www.unittest.de/test
+<br>
+<a class="clearLink" href="https://test-link2.com"/>
+<br>
+<img src="https://www.reloaded-domain.com/abc.png"/>
+<center><h2>Here is an image embedded in a message as a separate part:</h2>=
+</center>
+<center><img src=3D"cid:ae0357e57f04b8347f7621662cb63855.gif"></center>Than=
+k you,<br>
+</p>
+</td>
+</tr>
+</table>
+</body>
+</html>
+--69c1683a3ee16ef7cf16edd700694a2f--
+
+--6a82fb459dcaacd40ab3404529e808dc
+Content-Type: image/gif; name="logo.gif"
+Content-Transfer-Encoding: base64
+Content-Disposition: inline; filename="logo.gif"
+Content-ID: <ae0357e57f04b8347f7621662cb63855.gif>
+
+Tk9UX1JFQUxMWV9CQVNFNjQ9PQ==
+
+--6a82fb459dcaacd40ab3404529e808dc
+Content-Type: image/gif; name="background.gif"
+Content-Transfer-Encoding: base64
+Content-Disposition: inline; filename="background.gif"
+Content-ID: <4c837ed463ad29c820668e835a270e8a.gif>
+
+Tk9UX1JFQUxMWV9CQVNFNjQ9PQ==
+
+--6a82fb459dcaacd40ab3404529e808dc--
+
+--652b8c4dcb00cdcdda1e16af36781caf
+Content-Type: text/plain; name="attachment.txt"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="attachment.txt"
+
+SEVMTE8gV09STEQ=
+
+--652b8c4dcb00cdcdda1e16af36781caf--

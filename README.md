@@ -11,7 +11,7 @@ Install the package with pip
 Type ```emlAnalyzer --help``` to view the help.
 
 ```
-usage: emlAnalyzer [-h] [-i [INPUT]] [--header] [-x] [-a] [--text] [--html] [-s] [-u] [-ea EXTRACT] [--extract-all] [-o OUTPUT]
+usage: emlAnalyzer [-h] [-i [INPUT]] [--header] [-x] [-a] [--text] [--html] [-s] [-u] [-ea EXTRACT] [--extract-all] [-o OUTPUT] [--format [{json}]]
 
 A CLI script to analyze an email in the EML format for viewing headers, extracting attachments, etc.
 
@@ -25,12 +25,13 @@ optional arguments:
   --text                Shows plaintext
   --html                Shows HTML
   -s, --structure       Shows structure of the E-Mail
-  -u, --url             Shows embedded links and urls in the html part
+  -u, --url             Shows embedded links and urls in the HTML and text part
   -ea EXTRACT, --extract EXTRACT
-                        Extracts the x-th attachment
-  --extract-all         Extracts all attachments
+                        Extracts the x-th attachment. Can not be used together with the '--format' parameter.
+  --extract-all         Extracts all attachments. If a output format is specified the content of the attachments will be included in the structural output as a base64 encoded blob
   -o OUTPUT, --output OUTPUT
                         Path for the extracted attachment (default is filename in working directory)
+  --format [{json}]     Specifies a structured output format, the default format is not machine-readable
 ```
 
 ## Examples
@@ -120,4 +121,36 @@ x-rmx-source..................................123.123.123.123
 Content-Type..................................text/html; charset="iso-8859-1"
 Content-Transfer-Encoding.....................quoted-printable
 MIME-Version..................................1.0
+```
+
+### Example 4
+```json
+$ emlAnalyzer -i email_4.eml --format json
+{
+    "structure": {
+        "type": "multipart/mixed",
+        "children": [
+            {
+                "type": "text/plain"
+            },
+            {
+                "type": "application/pdf",
+                "name": "attachment_123.pdf",
+                "disposition": "attachment"
+            }
+        ]
+    },
+    "urls": [
+        "https://www.facebook.de/abc123",
+        "https://www.google.com/demo"
+    ],
+    "reloaded_content": [],
+    "attachments": [
+        {
+            "type": "application/pdf",
+            "name": "attachment_123.pdf",
+            "disposition": "attachment"
+        }
+    ]
+}
 ```
