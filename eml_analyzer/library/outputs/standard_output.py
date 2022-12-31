@@ -44,9 +44,9 @@ class StandardOutput(AbstractOutput):
         for child_item in structure.child_items:
             self._print_structure(structure=child_item, level=level + 1)
 
-    def process_option_show_embedded_urls_in_html(self, parsed_email: ParsedEmail) -> None:
+    def process_option_show_embedded_urls_in_html_and_text(self, parsed_email: ParsedEmail) -> None:
         print_headline_banner(headline='URLs in HTML part')
-        all_links = parsed_email.get_embedded_urls_from_html()
+        all_links = parsed_email.get_embedded_urls_from_html_and_text()
         if len(all_links) == 0:
             info(message='No URLs found in the html')
         for x in all_links:

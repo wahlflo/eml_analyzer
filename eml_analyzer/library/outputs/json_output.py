@@ -1,4 +1,3 @@
-import base64
 import json
 
 from eml_analyzer.library.outputs.abstract_output import AbstractOutput
@@ -26,11 +25,12 @@ class JsonOutput(AbstractOutput):
     def _generate_dict_from_structure_item(structure_item: StructureItem) -> dict:
         result_dict = {
             'type': structure_item.content_type,
-            'disposition': structure_item.content_disposition,
         }
 
         if structure_item.filename is not None:
             result_dict['name'] = structure_item.filename
+        if structure_item.content_disposition is not None:
+            result_dict['disposition'] = structure_item.content_disposition
 
         if len(structure_item.child_items) > 0:
             child_dicts = list()
@@ -40,8 +40,8 @@ class JsonOutput(AbstractOutput):
 
         return result_dict
 
-    def process_option_show_embedded_urls_in_html(self, parsed_email: ParsedEmail) -> None:
-        self._result_dictionary["urls"] = parsed_email.get_embedded_urls_from_html()
+    def process_option_show_embedded_urls_in_html_and_text(self, parsed_email: ParsedEmail) -> None:
+        self._result_dictionary["urls"] = parsed_email.get_embedded_urls_from_html_and_text()
 
     def process_option_show_html(self, parsed_email: ParsedEmail) -> None:
         html = parsed_email.get_html_content()
@@ -67,13 +67,15 @@ class JsonOutput(AbstractOutput):
 
     @staticmethod
     def _generate_attachment_dict_from_attachment(attachment: Attachment, extract_content: bool) -> dict:
-        attachment_dict = dict()
+        attachment_dict = {
+            'type': attachment.content_type,
+        }
         if attachment.filename is not None:
             attachment_dict['name'] = attachment.filename
-        attachment_dict['disposition'] = attachment.content_disposition
-        attachment_dict['type'] = attachment.content_type
+        if attachment.content_disposition is not None:
+            attachment_dict['disposition'] = attachment.content_disposition
         if extract_content:
-            attachment_dict['content_in_base64'] = base64.b64encode(attachment.content).decode()
+            attachment_dict['content_in_base64'] = attachment.get_content_base64_encoded()
         return attachment_dict
 
     def process_option_show_reloaded_content_from_html(self, parsed_email: ParsedEmail) -> None:

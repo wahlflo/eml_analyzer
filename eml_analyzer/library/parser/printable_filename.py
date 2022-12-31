@@ -25,8 +25,9 @@ def _make_string_printable(original_string: str) -> str:
 
 
 def _decode_ASCII_encoded_UTF8_string(string: str) -> str:
-    """ decodes ASCII strings which are encoded like: name := "?UTF-8?B?" + base64_encode(filename) + "?=" """
-    for match in list(re.finditer(pattern=r'=\?utf-8\?B\?(.+?)\?=', string=string)):
+    """ decodes ASCII strings which are encoded like: name := "=?UTF-8?B?" + base64_encode(string) + "?=" """
+    pattern = re.compile(r'=\?utf-8\?B\?(.+?)\?=', re.IGNORECASE)
+    for match in list(re.finditer(pattern=pattern, string=string)):
         try:
             string = string.replace(match.group(0), base64.b64decode(match.group(1)).decode('utf-8'))
         except binascii.Error:

@@ -1,4 +1,6 @@
 import email.message
+import base64
+
 from eml_analyzer.library.parser.printable_filename import get_printable_filename_if_existent
 
 
@@ -9,3 +11,6 @@ class Attachment:
         self.content_type: str = message.get_content_type()
         self.content_disposition: str = message.get_content_disposition()
         self.content: bytes = message.get_payload(decode=True)
+
+    def get_content_base64_encoded(self) -> str:
+        return base64.b64encode(self.content).decode()

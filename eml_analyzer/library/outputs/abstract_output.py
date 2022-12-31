@@ -17,7 +17,7 @@ class AbstractOutput(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def process_option_show_embedded_urls_in_html(self, parsed_email: ParsedEmail) -> None:
+    def process_option_show_embedded_urls_in_html_and_text(self, parsed_email: ParsedEmail) -> None:
         pass
 
     @abc.abstractmethod

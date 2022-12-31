@@ -120,24 +120,57 @@ class ParsedEmail:
                 return_list.append(Attachment(message=child, index=counter))
         return return_list
 
-    def get_embedded_urls_from_html(self) -> list[str]:
-        found_urls = list()
+    def get_embedded_urls_from_html_and_text(self) -> list[str]:
+        found_urls = set()
         html: str or None = self.get_html_content()
         if html is not None:
-            html: str   # html is now certainly a string
-            for pattern in [r'href="(.+?)"', r"href='(.+?)'"]:
-                for match in re.finditer(pattern, html):
-                    found_urls.append(match.group(1))
+            # remove at first the reloaded content from the html to prevent that URL from reloaded content are added to the embedded URLs
+            html_without_reloaded_content = ParsedEmail._get_new_html_without_reloaded_content(html=html)
+            found_urls.update(ParsedEmail._get_embedded_urls_from_html(html=html_without_reloaded_content))
+            found_urls.update(ParsedEmail._get_embedded_urls_from_text(text=html_without_reloaded_content))
+        text: str or None = self.get_text_content()
+        if text is not None:
+            found_urls.update(ParsedEmail._get_embedded_urls_from_text(text=text))
+        return list(found_urls)
+
+    @staticmethod
+    def _get_embedded_urls_from_html(html: str) -> set[str]:
+        found_urls = set()
+        for pattern_template in [r'href="(.+?)"', r"href='(.+?)'"]:
+            pattern = re.compile(pattern_template, re.IGNORECASE)
+            for match in re.finditer(pattern, html):
+                found_urls.add(match.group(1))
+        return found_urls
+
+    @staticmethod
+    def _get_embedded_urls_from_text(text: str) -> set[str]:
+        found_urls = set()
+        pattern = re.compile(r'(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?', re.IGNORECASE)
+        for match in re.finditer(pattern, text):
+            found_urls.add(match.group(0))
         return found_urls
 
     def get_reloaded_content_from_html(self) -> list[str]:
-        sources = list()
         html: str or None = self.get_html_content()
         if html is not None:
-            html: str   # html is now certainly a string
-            for pattern in [r'src="(.+?)"', r"src='(.+?)'", r'background="(.+?)"', r"background='(.+?)'"]:
-                for match in re.finditer(pattern, html):
-                    # embedded items which are attached to the email as attachment are referred to with a staring 'cid:', so these will be ignored
-                    if not match.group(1).startswith('cid:'):
-                        sources.append(match.group(1))
+            return ParsedEmail._get_reloaded_content_from_html(html=html)
+        return list()
+
+    @staticmethod
+    def _get_reloaded_content_from_html(html: str) -> list[str]:
+        sources = list()
+        for pattern_template in [r'src="(.+?)"', r"src='(.+?)'", r'background="(.+?)"', r"background='(.+?)'"]:
+            pattern = re.compile(pattern_template, re.IGNORECASE)
+            for match in re.finditer(pattern, html):
+                # embedded items which are attached to the email as attachment are referred to with a staring 'cid:', so these will be ignored
+                if not match.group(1).startswith('cid:'):
+                    sources.append(match.group(1))
         return sources
+
+    @staticmethod
+    def _get_new_html_without_reloaded_content(html: str) -> str:
+        for pattern_template in [r'src="(.+?)"', r"src='(.+?)'", r'background="(.+?)"', r"background='(.+?)'"]:
+            pattern = re.compile(pattern_template, re.IGNORECASE)
+            for match in re.finditer(pattern, html):
+                html = html.replace(match.group(0), '')
+        return html
