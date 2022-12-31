@@ -45,10 +45,10 @@ class StandardOutput(AbstractOutput):
             self._print_structure(structure=child_item, level=level + 1)
 
     def process_option_show_embedded_urls_in_html_and_text(self, parsed_email: ParsedEmail) -> None:
-        print_headline_banner(headline='URLs in HTML part')
+        print_headline_banner(headline='URLs in HTML and text part')
         all_links = parsed_email.get_embedded_urls_from_html_and_text()
         if len(all_links) == 0:
-            info(message='No URLs found in the html')
+            info(message='No URLs were found')
         for x in all_links:
             print(' - ' + colorize_string(text=x, color=Color.MAGENTA))
         print()
