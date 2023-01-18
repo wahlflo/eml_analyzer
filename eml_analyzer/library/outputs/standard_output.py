@@ -46,7 +46,7 @@ class StandardOutput(AbstractOutput):
 
     def process_option_show_embedded_urls_in_html_and_text(self, parsed_email: ParsedEmail) -> None:
         print_headline_banner(headline='URLs in HTML and text part')
-        all_links = parsed_email.get_embedded_urls_from_html_and_text()
+        all_links = parsed_email.get_embedded_clickable_urls_from_html_and_text()
         if len(all_links) == 0:
             info(message='No URLs were found')
         for x in all_links:
