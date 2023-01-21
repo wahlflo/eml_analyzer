@@ -41,7 +41,7 @@ class JsonOutput(AbstractOutput):
         return result_dict
 
     def process_option_show_embedded_urls_in_html_and_text(self, parsed_email: ParsedEmail) -> None:
-        self._result_dictionary["urls"] = parsed_email.get_embedded_urls_from_html_and_text()
+        self._result_dictionary["urls"] = parsed_email.get_embedded_clickable_urls_from_html_and_text()
 
     def process_option_show_html(self, parsed_email: ParsedEmail) -> None:
         html = parsed_email.get_html_content()

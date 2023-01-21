@@ -17,7 +17,7 @@ def main():
     argument_parser.add_argument('--text', action='store_true', default=False, help="Shows plaintext")
     argument_parser.add_argument('--html', action='store_true', default=False, help="Shows HTML")
     argument_parser.add_argument('-s', '--structure', action='store_true', default=False, help="Shows structure of the E-Mail")
-    argument_parser.add_argument('-u', '--url', action='store_true', default=False, help="Shows embedded links and urls in the HTML and text part")
+    argument_parser.add_argument('-u', '--url', action='store_true', default=False, help="Shows embedded clickable links and urls in the HTML and text part")
     argument_parser.add_argument('-ea', '--extract', type=int, default=None, help="Extracts the x-th attachment. Can not be used together with the '--format' parameter.")
     argument_parser.add_argument('--extract-all', action='store_true', default=None, help="Extracts all attachments. If a output format is specified the content of the attachments will be included in the structural output as a base64 encoded blob")
     argument_parser.add_argument('-o', '--output', type=str, default=None, help="Path for the extracted attachment (default is filename in working directory)")

@@ -140,7 +140,7 @@ class TestJsonOutput(unittest.TestCase):
 
     def test_show_embedded_urls_in_html_and_text(self):
         class parsedEmailMock:
-            def get_embedded_urls_from_html_and_text(self):
+            def get_embedded_clickable_urls_from_html_and_text(self):
                 return ["test_1", "test_2"]
 
             def get_error_messages(self) -> list[str]:
