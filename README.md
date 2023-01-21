@@ -25,7 +25,7 @@ optional arguments:
   --text                Shows plaintext
   --html                Shows HTML
   -s, --structure       Shows structure of the E-Mail
-  -u, --url             Shows embedded links and urls in the HTML and text part
+  -u, --url             Shows embedded clickable links and urls in the HTML and text part
   -ea EXTRACT, --extract EXTRACT
                         Extracts the x-th attachment. Can not be used together with the '--format' parameter.
   --extract-all         Extracts all attachments. If a output format is specified the content of the attachments will be included in the structural output as a base64 encoded blob
