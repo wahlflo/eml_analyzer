@@ -3,6 +3,7 @@ import email
 import email.message
 import urllib.parse
 import html
+import warnings
 from typing import NamedTuple
 
 from eml_analyzer.library.parser.attachment import Attachment
@@ -126,6 +127,13 @@ class ParsedEmail:
                 counter += 1
                 return_list.append(Attachment(message=child, index=counter))
         return return_list
+
+    def get_embedded_urls_from_html_and_text(self) -> list[str]:
+        warnings.warn(
+            "get_embedded_urls_from_html_and_text is deprecated, use get_embedded_clickable_urls_from_html_and_text instead",
+            DeprecationWarning
+        )
+        return self.get_embedded_clickable_urls_from_html_and_text()
 
     def get_embedded_clickable_urls_from_html_and_text(self) -> list[str]:
         found_urls = set()
