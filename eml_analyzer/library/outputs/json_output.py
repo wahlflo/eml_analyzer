@@ -1,4 +1,5 @@
 import json
+from typing import List
 
 from eml_analyzer.library.outputs.abstract_output import AbstractOutput
 from eml_analyzer.library.parser import ParsedEmail, Attachment, StructureItem
@@ -58,7 +59,7 @@ class JsonOutput(AbstractOutput):
         self._result_dictionary["attachments"] = JsonOutput._generate_attachments_dict_from_attachment_list(attachment_list=attachment_list, extract_content=extract_content)
 
     @staticmethod
-    def _generate_attachments_dict_from_attachment_list(attachment_list: list[Attachment], extract_content: bool) -> list[dict]:
+    def _generate_attachments_dict_from_attachment_list(attachment_list: List[Attachment], extract_content: bool) -> List[dict]:
         result_list = list()
         attachment: Attachment
         for attachment in attachment_list:
@@ -90,7 +91,7 @@ class JsonOutput(AbstractOutput):
         print(json.dumps(error_dict, indent=4))
 
     def get_final_output(self, parsed_email: ParsedEmail) -> str or None:
-        error_messages: list[str] = parsed_email.get_error_messages()
+        error_messages: List[str] = parsed_email.get_error_messages()
         if len(error_messages) > 0:
             self._result_dictionary['warnings'] = parsed_email.get_error_messages()
         return json.dumps(self._result_dictionary, indent=4)
