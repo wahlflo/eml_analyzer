@@ -88,12 +88,10 @@ class TestParsedEmail(unittest.TestCase):
         reloaded_content_from_html = x.get_reloaded_content_from_html()
         self.assertIn('https://www.reloaded-domain.com/abc.png', reloaded_content_from_html)
 
-    def test_embedded_urls_case_1_(self):
+    def test_embedded_urls_case_1(self):
         eml_content = load_test_eml_file('file_1.eml')
         x = ParsedEmail(eml_content=eml_content)
         embedded_urls = x.get_embedded_clickable_urls_from_html_and_text()
-        for x in embedded_urls:
-            print(x)
         self.assertEqual(len(embedded_urls), 2)
         self.assertIn('https://test-link2.com', embedded_urls)
         self.assertIn('https://www.unittest.de/test', embedded_urls)
@@ -107,12 +105,8 @@ class TestParsedEmail(unittest.TestCase):
         self.assertIn('https://embedded-url.com', embedded_urls)
         self.assertIn('https://twitter.com/', embedded_urls)
         self.assertIn('https://carleton.ca/', embedded_urls)
-        self.assertIn(
-            'https://nam12.safelinks.protection.outlook.com/?url=https://twitter.com/&data=05|01|admin@tq2zr.onmicrosoft.com|49360182de73427cd8e908dae851e772|71759330a027406e9082f1f64f1007b3|0|0|638077735753161743|Unknown|TWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0=|3000|||&sdata=YF3Fdvo0FyHQkXoHuhv3WzGzfhmqGjCRMdxUPIZsYvA=&reserved=0',
-            embedded_urls)
-        self.assertIn(
-            'https://nam12.safelinks.protection.outlook.com/?url=https://carleton.ca/&data=05|01|admin@tq2zr.onmicrosoft.com|49360182de73427cd8e908dae851e772|71759330a027406e9082f1f64f1007b3|0|0|638077735753161743|Unknown|TWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0=|3000|||&sdata=49SuRO9jfbmE5QmGqq85RvUZgZnyJ6XgFjlD3V7duYw=&reserved=0',
-            embedded_urls)
+        self.assertIn('https://nam12.safelinks.protection.outlook.com/?url=https://twitter.com/&data=05|01|admin@tq2zr.onmicrosoft.com|49360182de73427cd8e908dae851e772|71759330a027406e9082f1f64f1007b3|0|0|638077735753161743|Unknown|TWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0=|3000|||&sdata=YF3Fdvo0FyHQkXoHuhv3WzGzfhmqGjCRMdxUPIZsYvA=&reserved=0', embedded_urls)
+        self.assertIn('https://nam12.safelinks.protection.outlook.com/?url=https://carleton.ca/&data=05|01|admin@tq2zr.onmicrosoft.com|49360182de73427cd8e908dae851e772|71759330a027406e9082f1f64f1007b3|0|0|638077735753161743|Unknown|TWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0=|3000|||&sdata=49SuRO9jfbmE5QmGqq85RvUZgZnyJ6XgFjlD3V7duYw=&reserved=0', embedded_urls)
 
     def test_parser_embedded_urls_from_text_case_1(self):
         # if there is no protocol in front of a URL e.g. Outlook does not make it clickable for the user.
@@ -173,7 +167,6 @@ https://embedded_url.com
 </html>
         """)
         found_urls = {x.url for x in embedded_urls}
-        print(found_urls)
         self.assertEqual(4, len(embedded_urls))
         self.assertIn('https://nam12.safelinks.protection.outlook.com/?url=https://twitter.com/&data=05|01|admin@tq2zr.onmicrosoft.com|49360182de73427cd8e908dae851e772|71759330a027406e9082f1f64f1007b3|0|0|638077735753161743|Unknown|TWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0=|3000|||&sdata=YF3Fdvo0FyHQkXoHuhv3WzGzfhmqGjCRMdxUPIZsYvA=&reserved=0', found_urls)
         self.assertIn('https://nam12.safelinks.protection.outlook.com/?url=https://carleton.ca/&data=05|01|admin@tq2zr.onmicrosoft.com|49360182de73427cd8e908dae851e772|71759330a027406e9082f1f64f1007b3|0|0|638077735753161743|Unknown|TWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0=|3000|||&sdata=49SuRO9jfbmE5QmGqq85RvUZgZnyJ6XgFjlD3V7duYw=&reserved=0', found_urls)

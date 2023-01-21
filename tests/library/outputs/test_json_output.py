@@ -49,7 +49,7 @@ class TestJsonOutput(unittest.TestCase):
 
                 node_3a = structureItemMock(content_type="text/plain")
                 node_2.child_items.append(node_3a)
-                node_3b = structureItemMock(content_type="text/html_data")
+                node_3b = structureItemMock(content_type="text/html")
                 node_2.child_items.append(node_3b)
 
                 node_4 = structureItemMock(content_type="text/plain")
