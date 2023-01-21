@@ -1,5 +1,6 @@
 import json
 import unittest
+from typing import List, Tuple
 
 from eml_analyzer.library.outputs import JsonOutput
 from eml_analyzer.library.parser import Attachment, StructureItem
@@ -8,14 +9,14 @@ from eml_analyzer.library.parser import Attachment, StructureItem
 class TestJsonOutput(unittest.TestCase):
     def test_case_header(self):
         class parsedEmailMock:
-            def get_header(self) -> list[tuple[str, any]]:
+            def get_header(self) -> List[Tuple[str, any]]:
                 return [
                     ('key 1', 'value a'),
                     ('key 1', 'value b'),
                     ('key 2', 'value c'),
                 ]
 
-            def get_error_messages(self) -> list[str]:
+            def get_error_messages(self) -> List[str]:
                 return list()
 
         output = JsonOutput()
@@ -59,7 +60,7 @@ class TestJsonOutput(unittest.TestCase):
 
                 return node_0
 
-            def get_error_messages(self) -> list[str]:
+            def get_error_messages(self) -> List[str]:
                 return list()
 
         output = JsonOutput()
@@ -98,7 +99,7 @@ class TestJsonOutput(unittest.TestCase):
             def get_html_content(self):
                 return self.html
 
-            def get_error_messages(self) -> list[str]:
+            def get_error_messages(self) -> List[str]:
                 return list()
 
         output = JsonOutput()
@@ -122,7 +123,7 @@ class TestJsonOutput(unittest.TestCase):
             def get_text_content(self):
                 return self.text
 
-            def get_error_messages(self) -> list[str]:
+            def get_error_messages(self) -> List[str]:
                 return list()
 
         output = JsonOutput()
@@ -143,7 +144,7 @@ class TestJsonOutput(unittest.TestCase):
             def get_embedded_clickable_urls_from_html_and_text(self):
                 return ["test_1", "test_2"]
 
-            def get_error_messages(self) -> list[str]:
+            def get_error_messages(self) -> List[str]:
                 return list()
 
         output = JsonOutput()
@@ -163,10 +164,10 @@ class TestJsonOutput(unittest.TestCase):
                 self.content_disposition = "attachment"
 
         class parsedEmailMock:
-            def get_attachments(self) -> list[mockAttachment]:
+            def get_attachments(self) -> List[mockAttachment]:
                 return [mockAttachment("file_1"), mockAttachment("file_2")]
 
-            def get_error_messages(self) -> list[str]:
+            def get_error_messages(self) -> List[str]:
                 return list()
 
         output = JsonOutput()
@@ -185,7 +186,7 @@ class TestJsonOutput(unittest.TestCase):
             def get_reloaded_content_from_html(self):
                 return ["test_1", "test_2"]
 
-            def get_error_messages(self) -> list[str]:
+            def get_error_messages(self) -> List[str]:
                 return list()
 
         output = JsonOutput()

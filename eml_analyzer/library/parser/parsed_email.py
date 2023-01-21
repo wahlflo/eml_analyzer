@@ -4,7 +4,7 @@ import email.message
 import urllib.parse
 import html
 import warnings
-from typing import NamedTuple
+from typing import NamedTuple, List, Tuple, Set
 
 from eml_analyzer.library.parser.attachment import Attachment
 from eml_analyzer.library.parser.structure_item import StructureItem
@@ -16,6 +16,7 @@ class EmlParsingException(Exception):
 
 class PayloadDecodingException(Exception):
     pass
+
 
 class FoundUrl(NamedTuple):
     url: str
@@ -30,7 +31,7 @@ class ParsedEmail:
         self._html_content: str or None = None
 
         # an list containing error messages which occurred during parsing
-        self._error_messages: list[str] = list()
+        self._error_messages: List[str] = list()
 
     @staticmethod
     def _parse_email(eml_content: str) -> email.message.Message:
@@ -39,13 +40,13 @@ class ParsedEmail:
         except Exception as e:
             raise EmlParsingException(e)
 
-    def get_error_messages(self) -> list[str]:
+    def get_error_messages(self) -> List[str]:
         return self._error_messages
 
     def _add_error_messages(self, error_message: str) -> None:
         self._error_messages.append(error_message)
 
-    def get_header(self) -> list[tuple[str, any]]:
+    def get_header(self) -> List[Tuple[str, any]]:
         """ returns list of key-value pairs of header entries """
         return self._parsed_email.items()
 
@@ -119,7 +120,7 @@ class ParsedEmail:
 
         return list_of_possible_encodings
 
-    def get_attachments(self) -> list[Attachment]:
+    def get_attachments(self) -> List[Attachment]:
         return_list = list()
         counter = 0
         for child in self._parsed_email.walk():
@@ -128,14 +129,14 @@ class ParsedEmail:
                 return_list.append(Attachment(message=child, index=counter))
         return return_list
 
-    def get_embedded_urls_from_html_and_text(self) -> list[str]:
+    def get_embedded_urls_from_html_and_text(self) -> List[str]:
         warnings.warn(
             "get_embedded_urls_from_html_and_text is deprecated, use get_embedded_clickable_urls_from_html_and_text instead",
             DeprecationWarning
         )
         return self.get_embedded_clickable_urls_from_html_and_text()
 
-    def get_embedded_clickable_urls_from_html_and_text(self) -> list[str]:
+    def get_embedded_clickable_urls_from_html_and_text(self) -> List[str]:
         found_urls = set()
         html_data: str or None = self.get_html_content()
         if html_data is not None:
@@ -146,7 +147,7 @@ class ParsedEmail:
         return list(found_urls)
 
     @staticmethod
-    def _get_embedded_clickable_urls_from_html(html_data: str) -> set[str]:
+    def _get_embedded_clickable_urls_from_html(html_data: str) -> Set[str]:
         # find urls which are referenced in html links
         found_urls_in_html_links = ParsedEmail._get_embedded_clickable_urls_from_html_links(html_data=html_data)
         found_urls_in_html_text = ParsedEmail._get_embedded_clickable_urls_from_html_text(html_data=html_data, found_urls=found_urls_in_html_links)
@@ -172,7 +173,7 @@ class ParsedEmail:
         return found_urls
 
     @staticmethod
-    def _get_embedded_clickable_urls_from_html_text(html_data: str, found_urls: [FoundUrl]) -> set[str]:
+    def _get_embedded_clickable_urls_from_html_text(html_data: str, found_urls: [FoundUrl]) -> Set[str]:
         """ extracts URLs from HTML to capture also URLs which are embedded into the text rendered by the HTML payload """
         # remove at first the reloaded content from the html to prevent that URL from reloaded content are added to the embedded clickable URLs
         html_data = ParsedEmail._get_new_html_without_reloaded_content(html_data=html_data)
@@ -184,21 +185,21 @@ class ParsedEmail:
         return ParsedEmail._get_embedded_urls_from_text(text=html_data)
 
     @staticmethod
-    def _get_embedded_urls_from_text(text: str) -> set[str]:
+    def _get_embedded_urls_from_text(text: str) -> Set[str]:
         found_urls = set()
         pattern = re.compile(r'(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?', re.IGNORECASE)
         for match in re.finditer(pattern, text):
             found_urls.add(match.group(0))
         return found_urls
 
-    def get_reloaded_content_from_html(self) -> list[str]:
+    def get_reloaded_content_from_html(self) -> List[str]:
         html_data: str or None = self.get_html_content()
         if html_data is not None:
             return ParsedEmail._get_reloaded_content_from_html(html_data=html_data)
         return list()
 
     @staticmethod
-    def _get_reloaded_content_from_html(html_data: str) -> list[str]:
+    def _get_reloaded_content_from_html(html_data: str) -> List[str]:
         sources = list()
         for pattern_template in ParsedEmail._get_patterns_for_reloaded_content():
             pattern = re.compile(pattern_template, re.IGNORECASE)
@@ -220,6 +221,5 @@ class ParsedEmail:
         return html_data
 
     @staticmethod
-    def _get_patterns_for_reloaded_content() -> list[str]:
+    def _get_patterns_for_reloaded_content() -> List[str]:
         return [r' src="(.+?)"', r" src='(.+?)'", r' background="(.+?)"', r" background='(.+?)'"]
-
