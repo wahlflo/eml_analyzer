@@ -2,6 +2,8 @@ import setuptools
 
 with open('README.md', mode='r', encoding='utf-8') as readme_file:
     long_description = readme_file.read()
+    # remove badges in Readme
+    long_description = '# emlAnalyzer' + long_description.split('# emlAnalyzer')[1]
 
 
 setuptools.setup(

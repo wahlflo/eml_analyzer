@@ -1,3 +1,5 @@
+[![Unit-Tests](https://github.com/wahlflo/eml_analyzer/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/wahlflo/eml_analyzer/actions/workflows/unit-tests.yml)
+
 # emlAnalyzer
 A CLI script to analyze an email in the EML format for viewing headers, extracting attachments, etc.
 
