@@ -1,7 +1,6 @@
 import unittest
 
 from eml_analyzer.library.parser import Attachment
-from eml_analyzer.library.parser.printable_filename import get_printable_filename_if_existent, _make_string_printable, _decode_ASCII_encoded_UTF8_string
 
 
 class messageMock:
