@@ -1,19 +1,20 @@
 import unittest
 
-from eml_analyzer.library.parser.printable_filename import get_printable_filename_if_existent, _make_string_printable, _decode_ASCII_encoded_UTF8_string
+from eml_analyzer.library.parser.printable_filename import get_printable_filename_if_existent, _make_string_printable, _decode_ASCII_encoded_string
 
 
 class TestPrintableFilename(unittest.TestCase):
-    def test_decode_ASCII_encoded_UTF8_string(self):
+    def test_decode_ASCII_encoded_string(self):
         # [(value, expected)]
         test_cases = [
             ('', ''),
             ('Hello World', 'Hello World'),
             ('=?UTF-8?B?4o6Y7Z+/?=', '⎘퟿'),
             ('=?utf-8?b?4o6Y7Z+/?=', '⎘퟿'),
+            ('=?utf-16?b?SABlAGwAbABvAFcAbwByAGwAZAA=?=', 'HelloWorld'),
         ]
         for value, expected in test_cases:
-            result = _decode_ASCII_encoded_UTF8_string(string=value)
+            result = _decode_ASCII_encoded_string(string=value)
             self.assertEqual(result, expected)
 
     def test_make_string_printable(self):

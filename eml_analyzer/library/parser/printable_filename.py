@@ -12,7 +12,7 @@ def get_printable_filename_if_existent(message: email.message.Message) -> str or
 
 
 def _make_string_printable(original_string: str) -> str:
-    original_string = _decode_ASCII_encoded_UTF8_string(string=original_string)
+    original_string = _decode_ASCII_encoded_string(string=original_string)
 
     additional_allowed_chars = {'_', '.', '(', ')', '-', ' '}
     clean_name = ''
@@ -24,7 +24,7 @@ def _make_string_printable(original_string: str) -> str:
     return clean_name
 
 
-def _decode_ASCII_encoded_UTF8_string(string: str) -> str:
+def _decode_ASCII_encoded_string(string: str) -> str:
     """ decodes ASCII strings which are encoded like: name := "=?UTF-8?B?" + base64_encode(string) + "?=" """
     pattern = re.compile(r'=\?(.+?)\?B\?(.+?)\?=', re.IGNORECASE)
     for match in list(re.finditer(pattern=pattern, string=string)):
