@@ -98,9 +98,9 @@ class ParsedEmail:
         raise PayloadDecodingException('Payload could not be decoded')
 
     @staticmethod
-    def _create_list_of_possible_encodings(message: email.message.Message) -> set:
+    def _create_list_of_possible_encodings(message: email.message.Message) -> list:
         """ creates a list of the most possible encodings of a payload """
-        list_of_possible_encodings = set()
+        list_of_possible_encodings = list()
 
         # at first add the encodings mentioned in the object header
         for k, v in message.items():
@@ -112,12 +112,11 @@ class ParsedEmail:
                     entry = entry.strip()
                     if entry.startswith('charset='):
                         encoding = entry.replace('charset=', '').replace('"', '')
-                        list_of_possible_encodings.add(encoding)
+                        list_of_possible_encodings.append(encoding)
 
         for x in ['utf-8', 'windows-1251', 'iso-8859-1', 'us-ascii', 'iso-8859-15']:
             if x not in list_of_possible_encodings:
-                list_of_possible_encodings.add(x)
-
+                list_of_possible_encodings.append(x)
         return list_of_possible_encodings
 
     def get_attachments(self) -> List[Attachment]:

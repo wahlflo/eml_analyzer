@@ -125,6 +125,7 @@ class TestParsedEmail(unittest.TestCase):
         found_urls = ParsedEmail._get_embedded_urls_from_text(text="""https://carleton.ca/</a></span></div>""")
         self.assertEqual(1, len(found_urls))
         self.assertIn('https://carleton.ca/</a></span></div>', found_urls)
+
     def test_parser_embedded_urls_from_text_case_3(self):
         """ tested in Outlook. Outlook makes the string "https://carleton.ca/"</a></span></div>" clickable """
         found_urls = ParsedEmail._get_embedded_urls_from_text(text="""link: "https://carleton.ca/"</a></span></div>""")
@@ -220,6 +221,7 @@ https://embedded-url.com
 </html>
         """)
         self.assertEqual(0, len(embedded_urls))
+
     def test_get_reloaded_content_from_html_case_3(self):
         embedded_urls = ParsedEmail._get_reloaded_content_from_html(html_data="""<img class="EmojiInsert" src="data:image/gif;base64,{BASE64 emoji}" />""")
         self.assertEqual(0, len(embedded_urls))
