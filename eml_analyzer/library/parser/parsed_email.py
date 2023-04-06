@@ -117,7 +117,6 @@ class ParsedEmail:
         for x in ['utf-8', 'windows-1251', 'iso-8859-1', 'us-ascii', 'iso-8859-15']:
             if x not in list_of_possible_encodings:
                 list_of_possible_encodings.append(x)
-        print(list_of_possible_encodings)
         return list_of_possible_encodings
 
     def get_attachments(self) -> List[Attachment]:
