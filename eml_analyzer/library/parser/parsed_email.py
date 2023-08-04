@@ -7,6 +7,7 @@ import warnings
 from typing import NamedTuple, List, Tuple, Set
 
 from eml_analyzer.library.parser.attachment import Attachment
+from eml_analyzer.library.parser.printable_filename import decode_ASCII_encoded_string
 from eml_analyzer.library.parser.structure_item import StructureItem
 
 
@@ -48,7 +49,7 @@ class ParsedEmail:
 
     def get_header(self) -> List[Tuple[str, any]]:
         """ returns list of key-value pairs of header entries """
-        return self._parsed_email.items()
+        return [(key, decode_ASCII_encoded_string(value)) for key, value in self._parsed_email.items()]
 
     def get_structure(self) -> StructureItem:
         return StructureItem(message=self._parsed_email)

@@ -32,7 +32,7 @@ class TestParsedEmail(unittest.TestCase):
         header = x.get_header()
         for key, value in header:
             if key == 'Subject':
-                self.assertIn(value, 'UnitTest Subject =?UTF-8?B?TcO8bmNoZW4s?=')
+                self.assertEqual(value, 'UnitTest Subject München,')
                 return
         self.fail(msg="header subject not found")
 
@@ -235,8 +235,12 @@ https://embedded-url.com
         x = ParsedEmail(eml_content=eml_content)
         self.assertEqual(x.get_text_content().replace('\n', ' ').strip(), 'Dies ist ein dämlicher Test.')
 
-
-    def test_case_uf8_with_umlauts_txt(self):
+    def test_case_uf8_with_umlauts_header(self):
         eml_content = load_test_eml_file('utf8_with_umlauts.eml')
         x = ParsedEmail(eml_content=eml_content)
-        self.assertEqual(x.get_text_content().replace('\n', ' ').strip(), 'Dies ist ein dämlicher Test.')
+        header = x.get_header()
+        for key, value in header:
+            if key == 'Subject':
+                self.assertEqual(value, 'Dies_ist_ein_dämlicher_Test')
+                return
+        self.fail(msg="header subject not found")
