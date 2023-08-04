@@ -229,3 +229,14 @@ https://embedded-url.com
     def url_decode(self):
         import urllib.parse
         self.assertEqual(r"data=05%7C01", urllib.parse.unquote(r"data=05|01"))
+
+    def test_case_uf8_with_umlauts_txt(self):
+        eml_content = load_test_eml_file('utf8_with_umlauts.eml')
+        x = ParsedEmail(eml_content=eml_content)
+        self.assertEqual(x.get_text_content().replace('\n', ' ').strip(), 'Dies ist ein dämlicher Test.')
+
+
+    def test_case_uf8_with_umlauts_txt(self):
+        eml_content = load_test_eml_file('utf8_with_umlauts.eml')
+        x = ParsedEmail(eml_content=eml_content)
+        self.assertEqual(x.get_text_content().replace('\n', ' ').strip(), 'Dies ist ein dämlicher Test.')
