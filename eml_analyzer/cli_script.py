@@ -10,7 +10,7 @@ from eml_analyzer.library.parser import ParsedEmail, EmlParsingException, Attach
 
 def main():
     argument_parser = argparse.ArgumentParser(prog='emlAnalyzer', description='A CLI script to analyze an email in the EML format for viewing headers, extracting attachments, etc.')
-    argument_parser.add_argument('-i', '--input', help="Path to the EML file. Accepts standard input if omitted", type=argparse.FileType('r'), nargs='?', default=sys.stdin)
+    argument_parser.add_argument('-i', '--input', help="Path to the EML file. Accepts standard input if omitted", type=argparse.FileType('r', encoding='utf-8'), nargs='?', default=sys.stdin)
     argument_parser.add_argument('--header', action='store_true', default=False, help="Shows the headers")
     argument_parser.add_argument('-x', '--tracking', action='store_true', default=False, help="Shows content which is reloaded from external resources in the HTML part")
     argument_parser.add_argument('-a', '--attachments', action='store_true', default=False, help="Lists attachments")
