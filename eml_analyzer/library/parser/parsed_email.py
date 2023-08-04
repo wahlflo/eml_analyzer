@@ -7,6 +7,7 @@ import warnings
 from typing import NamedTuple, List, Tuple, Set
 
 from eml_analyzer.library.parser.attachment import Attachment
+from eml_analyzer.library.parser.printable_filename import decode_ASCII_encoded_string
 from eml_analyzer.library.parser.structure_item import StructureItem
 
 
@@ -48,7 +49,7 @@ class ParsedEmail:
 
     def get_header(self) -> List[Tuple[str, any]]:
         """ returns list of key-value pairs of header entries """
-        return self._parsed_email.items()
+        return [(key, decode_ASCII_encoded_string(value)) for key, value in self._parsed_email.items()]
 
     def get_structure(self) -> StructureItem:
         return StructureItem(message=self._parsed_email)
@@ -86,6 +87,10 @@ class ParsedEmail:
 
     @staticmethod
     def _get_decoded_payload_from_message(message: email.message.Message) -> None or str:
+        transfer_encoding = ParsedEmail._header_lookup_first_element(message=message, key='content-transfer-encoding')
+        if transfer_encoding in {'7bit', '8bit', 'binary'}:
+            return message.get_payload(decode=False)
+
         payload_in_bytes = message.get_payload(decode=True)
 
         list_of_possible_encodings = ParsedEmail._create_list_of_possible_encodings(message=message)
@@ -93,7 +98,8 @@ class ParsedEmail:
         for encoding_format in list_of_possible_encodings:
             try:
                 return payload_in_bytes.decode(encoding_format)
-            except ValueError:
+            except ValueError as error:
+                print('Error: ' + str(error))
                 continue
         raise PayloadDecodingException('Payload could not be decoded')
 
@@ -102,22 +108,43 @@ class ParsedEmail:
         """ creates a list of the most possible encodings of a payload """
         list_of_possible_encodings = list()
 
+        header_values = ParsedEmail._header_lookup(message=message, key='content-type')
+
         # at first add the encodings mentioned in the object header
-        for k, v in message.items():
-            k = str(k).lower()
-            v = str(v).lower()
-            if k == 'content-type':
-                entries = v.split(';')
-                for entry in entries:
-                    entry = entry.strip()
-                    if entry.startswith('charset='):
-                        encoding = entry.replace('charset=', '').replace('"', '')
-                        list_of_possible_encodings.append(encoding)
+        for v in header_values:
+            entries = v.split(';')
+            for entry in entries:
+                entry = entry.strip()
+                if entry.startswith('charset='):
+                    encoding = entry.replace('charset=', '').replace('"', '')
+                    list_of_possible_encodings.append(encoding)
 
         for x in ['utf-8', 'windows-1251', 'iso-8859-1', 'us-ascii', 'iso-8859-15']:
             if x not in list_of_possible_encodings:
                 list_of_possible_encodings.append(x)
         return list_of_possible_encodings
+
+    @staticmethod
+    def _payload_needs_decoding(message: email.message.Message) -> bool:
+        transfer_encoding = ParsedEmail._header_lookup_first_element(message=message, key='content-transfer-encoding')
+        if transfer_encoding is None:
+            return True
+        return transfer_encoding not in {'7bit', '8bit', 'binary'}
+
+    @staticmethod
+    def _header_lookup_first_element(message: email.message.Message, key: str) -> str or None:
+        for header_key, value in message.items():
+            if str(header_key).lower() == key:
+                return str(value).lower()
+        return None
+
+    @staticmethod
+    def _header_lookup(message: email.message.Message, key: str) -> [str]:
+        values = list()
+        for header_key, value in message.items():
+            if str(header_key).lower() == key:
+                values.append(str(value).lower())
+        return values
 
     def get_attachments(self) -> List[Attachment]:
         return_list = list()

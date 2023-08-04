@@ -1,6 +1,6 @@
 import unittest
 
-from eml_analyzer.library.parser.printable_filename import get_printable_filename_if_existent, _make_string_printable, _decode_ASCII_encoded_string
+from eml_analyzer.library.parser.printable_filename import get_printable_filename_if_existent, _make_string_printable, decode_ASCII_encoded_string
 
 
 class TestPrintableFilename(unittest.TestCase):
@@ -12,9 +12,10 @@ class TestPrintableFilename(unittest.TestCase):
             ('=?UTF-8?B?4o6Y7Z+/?=', '⎘퟿'),
             ('=?utf-8?b?4o6Y7Z+/?=', '⎘퟿'),
             ('=?utf-16?b?SABlAGwAbABvAFcAbwByAGwAZAA=?=', 'HelloWorld'),
+            ('=?UTF-8?Q?=c3=a4?=', 'ä'),
         ]
         for value, expected in test_cases:
-            result = _decode_ASCII_encoded_string(string=value)
+            result = decode_ASCII_encoded_string(string=value)
             self.assertEqual(result, expected)
 
     def test_make_string_printable(self):
@@ -24,6 +25,7 @@ class TestPrintableFilename(unittest.TestCase):
             ('Hello World', 'Hello World'),
             ('=?UTF-8?B?7Z+/?=', ''),  # character is not printable
             ('=?UTF-8?B?4o6Y?=', '_'),  # character is printable
+            ('=?UTF-8?Q?=c3=a4?=', 'ä'),  # character is printable
         ]
         for value, expected in test_cases:
             result = _make_string_printable(original_string=value)
@@ -36,6 +38,7 @@ class TestPrintableFilename(unittest.TestCase):
             ('Hello World', 'Hello World'),
             ('=?UTF-8?B?7Z+/?=', ''),  # character is not printable
             ('=?UTF-8?B?4o6Y?=', '_'),  # character is printable
+            ('=?UTF-8?Q?=c3=a4?=', 'ä'),  # character is printable
             (None, None),
         ]
 

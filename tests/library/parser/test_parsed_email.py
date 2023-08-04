@@ -8,7 +8,7 @@ def load_test_eml_file(test_file) -> str:
     current_directory_of_the_script = os.path.dirname(__file__)
     test_emails = os.path.join(current_directory_of_the_script, 'test_emails')
     path_to_test_file = os.path.join(test_emails, test_file)
-    with open(path_to_test_file, mode='r') as input_file:
+    with open(path_to_test_file, mode='r', encoding='utf-8') as input_file:
         return input_file.read()
 
 
@@ -32,7 +32,7 @@ class TestParsedEmail(unittest.TestCase):
         header = x.get_header()
         for key, value in header:
             if key == 'Subject':
-                self.assertIn(value, 'UnitTest Subject =?UTF-8?B?TcO8bmNoZW4s?=')
+                self.assertEqual(value, 'UnitTest Subject München,')
                 return
         self.fail(msg="header subject not found")
 
@@ -229,3 +229,18 @@ https://embedded-url.com
     def url_decode(self):
         import urllib.parse
         self.assertEqual(r"data=05%7C01", urllib.parse.unquote(r"data=05|01"))
+
+    def test_case_uf8_with_umlauts_txt(self):
+        eml_content = load_test_eml_file('utf8_with_umlauts.eml')
+        x = ParsedEmail(eml_content=eml_content)
+        self.assertEqual(x.get_text_content().replace('\n', ' ').strip(), 'Dies ist ein dämlicher Test.')
+
+    def test_case_uf8_with_umlauts_header(self):
+        eml_content = load_test_eml_file('utf8_with_umlauts.eml')
+        x = ParsedEmail(eml_content=eml_content)
+        header = x.get_header()
+        for key, value in header:
+            if key == 'Subject':
+                self.assertEqual(value, 'Dies_ist_ein_dämlicher_Test')
+                return
+        self.fail(msg="header subject not found")
