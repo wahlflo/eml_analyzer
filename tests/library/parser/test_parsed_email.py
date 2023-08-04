@@ -8,7 +8,7 @@ def load_test_eml_file(test_file) -> str:
     current_directory_of_the_script = os.path.dirname(__file__)
     test_emails = os.path.join(current_directory_of_the_script, 'test_emails')
     path_to_test_file = os.path.join(test_emails, test_file)
-    with open(path_to_test_file, mode='r') as input_file:
+    with open(path_to_test_file, mode='r', encoding='utf-8') as input_file:
         return input_file.read()
 
 
