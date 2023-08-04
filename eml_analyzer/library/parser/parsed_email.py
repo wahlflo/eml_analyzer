@@ -98,8 +98,7 @@ class ParsedEmail:
         for encoding_format in list_of_possible_encodings:
             try:
                 return payload_in_bytes.decode(encoding_format)
-            except ValueError as error:
-                print('Error: ' + str(error))
+            except ValueError:
                 continue
         raise PayloadDecodingException('Payload could not be decoded')
 
